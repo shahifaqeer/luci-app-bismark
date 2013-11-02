@@ -14,17 +14,19 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/luci-app-bismarkpassive
+define Package/luci-app-bismark-passive
   SECTION:=luci
   CATEGORY:=LuCI
   DEFAULT:=y
   TITLE:=BISmark passive
-  URL:=http://github.com/shahifaqeer/luci-app-bismark*
+  URL:=http://github.com/shahifaqeer/luci-app-bismark
   SUBMENU:=1. Applications
   DEPENDS:=+lua +libuci-lua +libubus-lua
 endef
 
 define Package/luci-app-bismark-passive/description
+  Bismark passive interdace on luci.
+
   Allows installation of experiments manager separate from
   luci version dependency.
 endef
@@ -35,20 +37,20 @@ endef
 define Build/Compile
 endef
 
-define Package/luci-app-bismark-experiments-manager/install
-	$(call Package/luci/install/template,$$(1),applications/luci-$(1)
+define Package/luci-app-bismark-passive/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller/bismark
+	$(CP) ./files/usr/lib/lua/luci/controller/bismark/passive.lua $(1)/usr/lib/lua/luci/controller/bismark/passive.lua
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi/bismark-passive
+	$(CP) ./files/usr/lib/lua/luci/model/cbi/bismark-passive/general.lua $(1)/usr/lib/lua/luci/model/cbi/bismark-passive/general.lua
 endef
 
-$(eval $(call application,bismark-experiments-manager,Bismark experiments manager,+bismark-experiments-manager))
-define Package/luci-app-bismark-experiments-manager/postinst
+define Package/luci-app-bismark-passive/postinst
 #!/bin/sh
-rm -f /tmp/luci-indexcache 
+rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
 endef
-define Package/luci-app-bismark-experiments-manager/prerm 
+define Package/luci-app-bismark-passive/prerm 
 #!/bin/sh
-rm -f /tmp/luci-indexcache
+rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
 endef
 
-#TODO add build/make methods
-#TODO check eval, call
-#TODO check dependencies
+$(eval $(call BuildPackage,luci-app-bismark-passive))

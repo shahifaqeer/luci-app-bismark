@@ -25,6 +25,9 @@ define Package/luci-app-bismark-experiments-manager
 endef
 
 define Package/luci-app-bismark-experiments-manager/description
+  Experiments manager for all bismark experiments installable
+  on luci.
+
   Allows installation of experiments manager separate from
   luci version dependency.
 endef
@@ -35,20 +38,20 @@ endef
 define Build/Compile
 endef
 
-define Package/luci-app-bismark-passive/install
-	$(call Package/luci/install/template,$$(1),applications/luci-$(1)
+define Package/luci-app-bismark-experiments-manager/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller/bismark
+	$(CP) ./files/usr/lib/lua/luci/controller/bismark/experiments.lua $(1)/usr/lib/lua/luci/controller/bismark/experiments.lua
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi/bismark-experiments-manager
+	$(CP) ./files/usr/lib/lua/luci/model/cbi/bismark-experiments-manager/general.lua $(1)/usr/lib/lua/luci/model/cbi/bismark-experiments-manager/general.lua
 endef
 
-$(eval $(call application,bismark-passive,Bismark passive,+bismark-passive))
-define Package/luci-app-bismark-passive/postinst
+define Package/luci-app-bismark-experiments-manager/postinst
+#!/bin/sh
+rm -f /tmp/luci-indexcache 
+endef
+define Package/luci-app-bismark-experiments-manager/prerm 
 #!/bin/sh
 rm -f /tmp/luci-indexcache
 endef
-define Package/luci-app-bismark-passive/prerm
-#!/bin/sh
-rm -f /tmp/luci-indexcache
-endef
 
-#TODO add make/build methods
-#TODO check evals and calls
-#TODO check dependencies 
+$(eval $(call BuildPackage,luci-app-bismark-experiments-manager))
